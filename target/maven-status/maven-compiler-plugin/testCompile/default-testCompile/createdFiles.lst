@@ -1,0 +1,3 @@
+com\personal\rest_server\AppTest.class
+com\personal\rest_server\controller\CustomerAPITest.class
+com\personal\rest_server\service\EmployeeServiceImplTest.class
