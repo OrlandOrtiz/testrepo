@@ -1,53 +1,54 @@
 package com.personal.rest_server.config;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.web.cors.CorsConfiguration;
-//import org.springframework.security.config.Customizer;
-
-//@Configuration
-//@EnableWebSecurity
+@Configuration
 public class SecurityConfig {
-	
-//	@Bean
-//	PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
-//
-//	@Bean
-//	public InMemoryUserDetailsManager userDetailsService() {
-//		UserDetails admin = User.withUsername("admin").password(passwordEncoder().encode("123")).roles("ADMIN").build();
-//		UserDetails user = User.withUsername("tim").password(passwordEncoder().encode("tim123")).roles("USER").build();
-//		return new InMemoryUserDetailsManager(user, admin);
-//	}
-//	
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		String requestMatcher = "/books/**";
-//		http.httpBasic(Customizer.withDefaults()).authorizeHttpRequests(
-//				(authorize) -> authorize.requestMatchers(HttpMethod.GET, requestMatcher).permitAll()
-//				.requestMatchers(HttpMethod.PUT, requestMatcher).hasAnyRole("ADMIN","USER")
-//				.requestMatchers(HttpMethod.POST, requestMatcher).hasAnyRole("ADMIN")
-//				.requestMatchers(HttpMethod.DELETE, requestMatcher).hasAnyRole("ADMIN").anyRequest()
-//				.authenticated());
-//		http.csrf(csrf -> csrf. disable());
-//		http.cors(cors -> cors.configurationSource(request -> {
-//			CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
-//			config.addAllowedMethod(HttpMethod.PUT);
-//			config.addAllowedMethod(HttpMethod.DELETE);
-//			return config;
-//		}));
-//		return http.build();				
-//	}
+
+    @Autowired
+    private JwtRequestFilter jwtFilter;
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+            .authorizeHttpRequests()
+            .requestMatchers(
+                    "/auth/**",                    // login
+                    "/v3/api-docs/**",             // documentación
+                    "/swagger-ui/**",              // interfaz Swagger
+                    "/swagger-ui.html"             // acceso directo
+                ).permitAll()
+            .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

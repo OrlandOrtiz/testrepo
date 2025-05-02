@@ -22,7 +22,9 @@ import com.personal.rest_server.exception.BookNotFoundException;
 import com.personal.rest_server.service.BookService;
 import com.personal.rest_server.service.BorrowedBookService;
 
-//@CrossOrigin(origins = "*")
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping(value = "/library")
 public class LibraryAPI {
