@@ -10,5 +10,6 @@ import com.personal.rest_server.entity.BorrowedBook;
 public interface BorrowedBookRepository  extends JpaRepository<BorrowedBook, Long> {
 	
 	Optional<BorrowedBook> findByBook(Book book);
+	Optional<BorrowedBook> findByBookAndReturnDateIsNull(Book book);
 
 }

@@ -65,7 +65,7 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
 		Book book = bookRepository.findById(id)
 	            .orElseThrow(() -> new BookNotFoundException("The book with the ID " + id + " was not found."));
 		
-		Optional<BorrowedBook> bBook = Optional.ofNullable(repository.findByBook(book)
+		Optional<BorrowedBook> bBook = Optional.ofNullable(repository.findByBookAndReturnDateIsNull(book)
 				.orElseThrow(() -> new BookNotFoundException("Borrowed Book not found")));
 		
 		bBook.get().setIsReturned(1);
