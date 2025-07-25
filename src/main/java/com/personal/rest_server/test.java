@@ -12,9 +12,9 @@ public class test {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         if (encoder.matches(rawPassword, storedHash)) {
-            System.out.println("✅ Coincide con la base de datos");
+            System.out.println("✅ Coincide con la base de datos.");
         } else {
-            System.out.println("❌ No coincide");
+            System.out.println("❌ No coincide.");
         }
     }
 }
