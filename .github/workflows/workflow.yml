@@ -27,5 +27,5 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
         
-      - name: Run unit tests with nose
-        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
+      - name: Run unit tests with junit
+        run: mvn test
