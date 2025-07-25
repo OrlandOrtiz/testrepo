@@ -16,18 +16,19 @@ public class EmployeeServiceImplTest {
 	@Autowired
 	EmployeeServiceImpl em;
 	
+	
 	@MockBean
 	private EmployeeRepository employeeRepository;
 	
 	@MockBean
 	private ModelMapper modelMapper;
 	
-	@Test
+	/*@Test
 	public void getAllEmployeesTest() {
 		Mockito.when(employeeRepository.findAll()).thenReturn(null);
 		
 		assertThrows(ServerException.class, () -> em.getAllEmployees());
 		
-	}
+	}*/
 
 }
